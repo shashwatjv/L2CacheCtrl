@@ -1,0 +1,54 @@
+// -------------------------------------------------------------------------
+// Portland State University
+// Course: ECE585
+// 
+// Project: L2 Cache Controller
+// 
+// Filename: L2CacheCtrl.pkg
+// 
+// Description: Package file to declare enumerated STATE types, Parameters
+// -------------------------------------------------------------------------
+
+`ifndef CACHECTRL_PKG_DEFS_DONE
+
+`define CACHECTRL_PKG_DEFS_DONE
+
+package L2CacheCtrl_pkg;
+
+// Parameters
+parameter NUM_PROC = `NUM_PROCESSOR;
+parameter PA_BITS = `PA_BITS;
+
+parameter L1_ASSOC = `L1_ASSOC;
+parameter L1_LINE_SZ = `L1_LINE_SIZE;
+
+parameter L2_SIZE_KB = `L2_SIZE_KB;
+parameter L2_ASSOC = `L2_ASSOC;
+parameter L2_LINE_SZ = `L2_LINE_SIZE;
+parameter L2_LRU_BITS = $clog2(L2_ASSOC);
+
+// Create Enumerated MESI States
+typedef enum {INV=0, MOD=1, EXCL=2, SHRD=3} MESI_STATES;
+
+// Bus Operation Types
+typedef enum {READ=1, WRITE=2, INVALIDATE=3, RWIM=4} BUS_OP;
+
+// Snoop Response Types
+typedef enum {NOTHIT=0, HIT=1, HITM=2} SNOOP_RESP;
+
+endpackage
+
+import L2CacheCtrl_pkg::*; // import package in current scope
+
+`endif
+
+// -------------------------------------------------------------------------
+// Package file Divide.pkg complete
+// -------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------
+// Revision History
+// Version 1
+// Date : 04 March 2017
+// Author: Shashwat Vinchurkar (shashwat@pdx.edu)
+//
