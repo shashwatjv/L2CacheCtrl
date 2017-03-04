@@ -25,7 +25,13 @@ parameter L1_LINE_SZ = `L1_LINE_SIZE;
 parameter L2_SIZE_KB = `L2_SIZE_KB;
 parameter L2_ASSOC = `L2_ASSOC;
 parameter L2_LINE_SZ = `L2_LINE_SIZE;
-parameter L2_LRU_BITS = $clog2(L2_ASSOC);
+
+parameter L2_LRU_LENGTH = $clog2(L2_ASSOC);
+parameter L2_INDEX_LENGTH = $clog2(L2_SIZE_KB*1024) - $clog2(L2_ASSOC) - $clog2(L2_LINE_SZ);
+parameter L2_TAG_LENGTH = PA_BITS - L2_INDEX_LENGTH - $clog2(L2_LINE_SZ);
+
+// Create BYTE type
+typedef enum logic [7:0] BYTE;
 
 // Create Enumerated MESI States
 typedef enum {INV=0, MOD=1, EXCL=2, SHRD=3} MESI_STATES;
@@ -43,7 +49,7 @@ import L2CacheCtrl_pkg::*; // import package in current scope
 `endif
 
 // -------------------------------------------------------------------------
-// Package file Divide.pkg complete
+// Package file L2CacheCtrl.pkg complete
 // -------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------
