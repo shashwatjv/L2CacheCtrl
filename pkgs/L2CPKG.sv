@@ -62,7 +62,7 @@ typedef struct packed {
 
 endpackage
 
-import L2CacheCtrl_pkg::*; // import package in current scope
+import L2CPKG::*; // import package in current scope
 
 `endif
 
