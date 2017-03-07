@@ -11,7 +11,7 @@
 //                 corresponds to Set N Associativity
 // -------------------------------------------------------------------------
 
-`include "L2CacheCtrl.pkg"
+`include "L2CPKG.sv"
 
 class L2CSET;
    // Create a cache line of CLINE type

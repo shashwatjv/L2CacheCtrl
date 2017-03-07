@@ -9,7 +9,7 @@
 // Description: Defines the Single Cacheline class and its methods
 // -------------------------------------------------------------------------
 
-`include "L2CacheCtrl.pkg"
+`include "L2CPKG.sv"
 
 class L2CLINE;
    // Create a cache line of CLINE type
