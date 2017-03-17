@@ -1,0 +1,11 @@
+1. L1 is responsible to notify L2 about first modification of L1, so that L2
+   is consistent with L1 modificaed state (can be modelled as simple L1 write)
+2. A write from the L1 to L2 cache indicates a modified L1 cache so, dont do a
+   Bus operation.(can be checked by ensuring we have hit every time for L1 wr)
+3.  
+
+
+------------------------------------------------------------------------------
+
+CMD to BUS OP MAP
+1. L1 WR (ALLOC) -> BUS WR 

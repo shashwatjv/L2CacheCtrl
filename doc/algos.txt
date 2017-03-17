@@ -1,0 +1,25 @@
+
+1. Get command
+
+2. TAG, Index, Byte offset
+
+3. Hit/Miss
+
+4. TAG check
+
+5. if MISS
+
+6. allocate new cache line
+------------------------------------------------------
+TAG _ Check
+
+1. cache as a array of 2^15 CSET
+2. cache[indx of step 2].set_chk_Tag(TAG of step2)
+3. 
+
+--------------------------- 
+allocate new cache line
+
+1. check way_count of index 
+2. if != ASSOC ... cache[indx].set_lru() , set_tag
+3. if == ASSOC ... 
