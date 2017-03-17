@@ -21,7 +21,7 @@ class L2CSET;
    L2CLINE line[L2_ASSOC] ;
 
    // index holds the INDEX of the set within the cache
-   int index;
+   TYP_INDX index;
    
    // count from 0 to MAX_ASSOC ( 0 to 2/4/8 ...)
    TYP_RU_COUNT wayCount;
@@ -52,11 +52,12 @@ class L2CSET;
       // 1. check waycount
       //     if not MAX setup new line
       // 2. if MAX associativity occupied
-      // ..... TODO
+      // 
       //
+	 ru = LRU;
 	 if(this.wayCount === L2_ASSOC) begin
 	    // EVICT a Line
-	    this.set_evict_line();
+	    this.set_evict_line(ru);
 	 end
 
 	 // now with one line evicted, get the closest WAY we can allocate
@@ -81,7 +82,7 @@ class L2CSET;
       end
    endfunction // set_alloc_line
    
-   function automatic int set_updt_lru( TYP_RU_NUM ru_in);
+   function automatic void set_updt_ru( TYP_RU_NUM ru_in);
       int c;
       begin
 	 foreach (this.line[i]) begin
@@ -91,17 +92,19 @@ class L2CSET;
 	       $finish();
 	    end
 	 end
-	 return 0;
       end
    endfunction // updt_lru
 
-   function automatic void set_evict_line();
+   function automatic void set_evict_line(TYP_RU_NUM ru_in);
       int way;
+      TYP_PA pa;
+      TYP_BUSOP busop;
+      TYP_SNOOP_RESP resp;
       begin
 
 	 // get the WAY for LRU line
 	 foreach(this.line[i]) begin
-	    if(this.line[i].get_ru_num() === LRU) begin
+	    if(this.line[i].get_ru_num() === ru_in) begin
 	       way = i;
 	       break;
 	    end
@@ -111,11 +114,22 @@ class L2CSET;
 	 // evict the line if not modified, else writeback
 	 if(this.line[way].get_mesi_bits() === MOD) begin
 	    // write back to next level of memory hierarchy
+	    pa = { >> {this.line[way].get_tag(), this.index, {L2_LINE_ADDR{1'b0}} } };
+            busop = WRITE;
+
+            BusOperation(pa, busop, resp);
+            assert(resp==NOHIT); // for L2 eviction never expect HIT/HITM
+
+            // notify L1 about eviction in L2
+            L1Notify_L2Evict(pa);
 	 end
 
+	 // update RU for cache lines such that RU is reduced by 1 respectively
+	 this.set_updt_ru(ru_in);
+	 
 	 // invalidate the line
 	 this.line[way].put_mesi_inv();
-
+	 
 	 this.wayCount--;
       end 
    endfunction // set_evict_line

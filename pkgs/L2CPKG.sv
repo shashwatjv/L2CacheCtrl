@@ -43,7 +43,8 @@ package L2CPKG;
    typedef logic [L2_LRU_LENGTH:0]   TYP_RU_COUNT;
    typedef logic [L2_TAG_LENGTH-1:0] TYP_TAG;
    typedef logic [PA_BITS-1:0] 	     TYP_PA;
- 	     
+   typedef logic [L2_INDEX_LENGTH-1:0] TYP_INDX;
+   
    // Create Enumerated MESI States
    typedef enum int {INV=0, MOD=1, EXCL=2, SHRD=3} TYP_MESI_STATES;
 

@@ -9,7 +9,7 @@
 // Description: Collection of the Bus Operation functions
 // -------------------------------------------------------------------------
 
-function BusOperation
+function void BusOperation
   (
    input TYP_PA addr,
    input TYP_BUSOP cmd,
@@ -29,3 +29,18 @@ function BusOperation
 	$cast(resp, ($countones(addr) % 3) );
    end
 endfunction // BusOperation
+
+function void L1Notify_L2Evict
+  (
+   input TYP_PA addr
+   );
+   begin
+      // This Function Notifies L1 to evict the cachline evicted by L2
+      // Assumptions:
+      // 1. L2 notofies exact PA it evicted
+      // 2. L1 had knowledge of Cacheline Size of L2
+      //      Knowing (L2CacheLineSize/L1CacheLineSize) determines 
+      //      the number of Cache lines to be evicted by L1
+      $display(" L2 Notification -> Evicted Address : 0x%0x " , addr);
+   end
+endfunction // L1Notify_L2Evict
