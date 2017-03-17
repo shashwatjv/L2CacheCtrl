@@ -3,7 +3,7 @@ setup :
 	vmap work work
 
 compile :
-	vlog +incdir+../pkgs/+../ ../design/L2CLINE.sv
+	vlog +incdir+./+../pkgs/+../+../design/ ../design/L2CSET.sv
 clean :
 	rm -rf work
 	rm modelsim.ini

@@ -17,48 +17,56 @@
 
 package L2CPKG;
 
-// Parameters
-parameter NUM_PROC = `NUM_PROCESSOR;
-parameter PA_BITS = `PA_BITS;
+   // Parameters
+   parameter NUM_PROC = `NUM_PROCESSOR;
+   parameter PA_BITS = `PA_BITS;
 
-parameter L1_ASSOC = `L1_ASSOC;
-parameter L1_LINE_SZ = `L1_LINE_SIZE;
+   parameter L1_ASSOC = `L1_ASSOC;
+   parameter L1_LINE_SZ = `L1_LINE_SIZE;
 
-parameter L2_SIZE_KB = `L2_SIZE_KB;
-parameter L2_ASSOC = `L2_ASSOC;
-parameter L2_LINE_SZ = `L2_LINE_SIZE;
+   parameter L2_SIZE_KB = `L2_SIZE_KB;
+   parameter L2_ASSOC = `L2_ASSOC;
+   parameter L2_LINE_SZ = `L2_LINE_SIZE;
 
-parameter L2_LRU_LENGTH = $clog2(L2_ASSOC);
-parameter L2_INDEX_LENGTH = $clog2(L2_SIZE_KB*1024) - $clog2(L2_ASSOC) - $clog2(L2_LINE_SZ);
-parameter L2_TAG_LENGTH = PA_BITS - L2_INDEX_LENGTH - $clog2(L2_LINE_SZ);
+   parameter L2_LRU_LENGTH = $clog2(L2_ASSOC);
+   parameter L2_INDEX_LENGTH = $clog2(L2_SIZE_KB*1024) - $clog2(L2_ASSOC) - $clog2(L2_LINE_SZ);
+   parameter L2_TAG_LENGTH = PA_BITS - L2_INDEX_LENGTH - $clog2(L2_LINE_SZ);
+   parameter L2_LINE_ADDR = $clog2(L2_LINE_SZ);
 
-// Create BYTE, other frequently used types
-typedef logic [7:0] BYTE;
-typedef logic [L2_LRU_LENGTH-1:0] TYP_RU_NUM;
-typedef logic [L2_TAG_LENGTH-1:0] TYP_TAG;
+   // Create LRU/MRU constants
+   parameter LRU = 0;
+   //parameter MRU = L2_ASSOC-1;
+   
+   // Create BYTE, other frequently used types
+   typedef logic [7:0] BYTE;
+   typedef logic [L2_LRU_LENGTH-1:0] TYP_RU_NUM;
+   typedef logic [L2_LRU_LENGTH:0]   TYP_RU_COUNT;
+   typedef logic [L2_TAG_LENGTH-1:0] TYP_TAG;
+   typedef logic [PA_BITS-1:0] 	     TYP_PA;
+ 	     
+   // Create Enumerated MESI States
+   typedef enum int {INV=0, MOD=1, EXCL=2, SHRD=3} TYP_MESI_STATES;
 
-// Create Enumerated MESI States
-typedef enum logic [1:0] {INV=0, MOD=1, EXCL=2, SHRD=3} MESI_STATES;
+   // Bus Operation Types
+   typedef enum int {READ=1, WRITE=2, INVALIDATE=3, RWIM=4} TYP_BUSOP;
 
-// Bus Operation Types
-typedef enum {READ=1, WRITE=2, INVALIDATE=3, RWIM=4} BUS_OP;
+   // Snoop Response Types
+   typedef enum int {NOHIT=0, HIT=1, HITM=2} TYP_SNOOP_RESP;
 
-// Snoop Response Types
-typedef enum {NOTHIT=0, HIT=1, HITM=2} SNOOP_RESP;
+   // Command Types
+   typedef enum int {RD_L1D=0, WR_L1D=1, RD_L1I=2, SNP_INV=3, SNP_RD=4, SNP_WR=5, SNP_RWIM=6, CLR=8, DISP=9} TYP_CMD;
 
-// Define Cache-Line data structure
+   // Define Cache-Line data structure
 
-typedef struct packed {
-   BYTE [L2_LINE_SZ-1:0] data;
-   TYP_TAG tag;
-   logic [L2_INDEX_LENGTH-1:0] indx; // probably can be removed later if not required
-   MESI_STATES mesi;
-   TYP_RU_NUM ru_num;
-} CLINE;
+   typedef struct packed {
+      BYTE [L2_LINE_SZ-1:0] data;
+      TYP_TAG tag;
+      //logic [L2_INDEX_LENGTH-1:0] indx; // probably can be removed later if not required
+      TYP_MESI_STATES mesi;
+      TYP_RU_NUM ru_num;
+   } CLINE;
 
-typedef struct packed {
-   CLINE [L2_ASSOC-1:0] line;
-} CSET;
+`include "L2BUSOP.sv"
 
 endpackage
 
