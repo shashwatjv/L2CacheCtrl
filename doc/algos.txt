@@ -23,3 +23,43 @@ allocate new cache line
 1. check way_count of index 
 2. if != ASSOC ... cache[indx].set_lru() , set_tag
 3. if == ASSOC ... 
+
+---------------------------
+Process CPU command
+
+1. check TAGS
+2. if nomatch(-1)
+	a. allocate a line (got the WAY)
+	b. Set TAG 
+	c. do BusOP based on operation
+	d. put data in cache line
+	e. update MESI state (CMD, SNP_RSP)
+3. else (match)
+	a. get RU
+	b. update ru (RU)
+
+4. get/put data to L1
+
+----------------------------
+Process SNOOP command
+
+1. check TAG
+2. If no match
+	a. set return as NOHIT
+3. If match
+	a. check MESI state
+	b. set return as HIT/HITM
+
+-----------------------------
+Process Clear Command
+1. foreach SET of Cache delete objects
+2. clear all counters
+	
+-----------------------------
+Print Statistics
+
+1. cache read
+2. cache write
+3. cache hits
+4. cache miss
+5. hit ratio

@@ -124,7 +124,7 @@ class L2CLINE;
 		   begin
 		      this.myline.mesi = EXCL; 	   
 		   end
-		   else if((cmd == WR_L1D) & (cmd == SN_RWIM)) begin
+		   else if((cmd == WR_L1D) & (cmd == SNP_RWIM)) begin
 		      this.myline.mesi = MOD; 	   
 		   end
 		   // PROCESSOR ACCESSING MEMORY 
@@ -167,7 +167,7 @@ class L2CLINE;
 
 	   SHRD: // Shared 
 		   // SNOOPING PROCESSOR
-		   if((snoop == SNP_RD) & (snoop == HIT) begin 
+		   if((snoop == SNP_RD) & (snoop == HIT)) begin 
 		      this.myline.mesi = SHRD; 	   
 		   end
 		   else if((cmd == SNP_RWIM) | (cmd ==SNP_INV)) begin
@@ -183,7 +183,7 @@ class L2CLINE;
 		       this.myline.mesi = MOD;
 		   end
 		   // PROCESSOR ACCESSING MEMORY
-          default:
+          //default:
       endcase
    endfunction // updt_mesi
 
