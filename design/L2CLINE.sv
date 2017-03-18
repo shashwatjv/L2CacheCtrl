@@ -140,7 +140,7 @@ class L2CLINE;
 		   // SNOOPING PROCESSOR
 		   
 		   // PROCESSOR ACCESSING MEMORY 
-		   else if((cmd == RD_L1D) | (snoop == RD_L1I) | (snoop == WR_L1D)) begin
+		   else if((cmd == RD_L1D) | (cmd == RD_L1I) | (cmd == WR_L1D)) begin
 		       this.myline.mesi = MOD;
 		   end
 		   // PROCESSOR ACCESSING MEMMORY 
@@ -186,6 +186,18 @@ class L2CLINE;
           //default:
       endcase
    endfunction // updt_mesi
+   
+   function automatic void print_line();
+		// this.myline.mesi = INV;
+		// this.myline.ru_num = '0;
+        // this.myline.tag = '0;
+        // this.myline.data = '0;
+		$display("---------- Line Data ----------\n"); 
+		$display("Tag --- %0p \n",this.myline.tag); 
+		$display("LRU Num --- %0p \n",this.myline.ru_num); 
+		$display("MESI State --- %0p \n",this.myline.mesi);
+		$display("----------------------------------\n"); 		
+   endfunction
 
 
    function automatic void put_data(BYTE din, logic [L2_LINE_ADDR-1:0] ain );
