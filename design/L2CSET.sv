@@ -265,7 +265,7 @@ class L2CSET;
 	 foreach(this.line[i]) begin
 	    // display only if valid line
 	    if(this.line[i].get_mesi_bits() != INV) begin
-	       $display("\t | SET-%d | WAY-%p | MESI-%p | RU-%d | TAG-0x%h ",
+	       $display("\t | SET-%d\t| WAY-%p\t| MESI-%p\t| RU-%d\t| TAG-0x%h\t",
 			this.index, i, this.line[i].get_mesi_bits(), 
 			this.line[i].get_ru_num(), this.line[i].get_tag());
 	    end
