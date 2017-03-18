@@ -17,13 +17,13 @@ class L2CACHE;
 
    longint reads, writes, misses, hits;
 
-   function automatic l2_command_process(TYP_CMD cmd_in, TYP_PA pa_in);
+   function automatic void l2_command_process(TYP_CMD cmd_in, TYP_PA pa_in);
       TYP_INDX set;
       int  indx;
       bit  cpu, snp;
       int  hit;
-      
-    begin	
+      begin
+
 		set = pa_in >> L2_LINE_ADDR; // shifting by offset bits gets us to Index bits
 		$cast(indx,set);
 		
@@ -32,7 +32,7 @@ class L2CACHE;
 		snp = !cpu && !( (cmd_in == DISP) || (cmd_in == CLR) );
 
 		// Create the Cache Set if not present
-		if(cache[indx] == null) begin
+		if(!cache.exists(indx)) begin
 		   cache[indx] = new(indx);
 		end		
 
@@ -58,7 +58,7 @@ class L2CACHE;
 	 
 	 // STILL UNDER CONSIDERATION --- PENDING 
 	 // USED FOR SNOOP STATS 
-	 if(snp) begin
+/*	 if(snp) begin
 	    resp = cache[index].set_process_snoop(cmd_in, pa_in);
 	    cache[index].mesibit; 
 		if(mesibit == invalid) begin 
@@ -68,17 +68,24 @@ class L2CACHE;
 			hits++; 
 		end 
 	 end
-	 
+*/	
 	 if(cmd_in == DISP) begin
-		foreach chache[i] begin 
-			cache[i].setprint; //Print Contents - Tags, Data, LRU, MESI State, Capture Statistics 
+
+	        $display("\t -----------------------------------------------------------");
+	        $display("\t |      STATISTICS FOR L2 CACHE CONTROLLER SIMULATION");
+	        $display("\t -----------------------------------------------------------");
+	    
+		foreach (cache[i]) begin 
+			cache[i].set_print(); //Print Contents - Tags, Data, LRU, MESI State, Capture Statistics 
 		end
-		$display("------------ STATS -----------\n"); 
-		$display("No. of Hits --- %0lu\n",hits);
-		$display("No. of Misses --- %0lu\n",misses); 
-		$display("No. of Read --- %0lu\n",reads); 
-		$display("No. of Writes --- %0lu\n",writes);
-		$display("--------------------------------"); 		
+	        $display("\t -----------------------------------------------------------");
+		$display("\t | HITS   --- %0d ",hits);
+		$display("\t | MISSES --- %0d ",misses); 
+		$display("\t | READS  --- %0d ",reads); 
+		$display("\t | WRITES --- %0d ",writes);
+		$display("\t | RATIO  --- %0.2f%%",(hits*100.0)/(reads+writes));
+	        $display("\t -----------------------------------------------------------");
+	        $display("\n");
 	 end 
 	 
 	// Clear command is called we clear the stats and the objects 
@@ -92,6 +99,6 @@ class L2CACHE;
 		// Remove Cache elements   
 		cache.delete; //remove all entries from the associative array cache
 	end  		 
- 
-	endfunction // l2_command_process
+      end
+    endfunction // l2_command_process
  endclass 

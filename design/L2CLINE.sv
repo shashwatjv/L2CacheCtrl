@@ -9,10 +9,6 @@
 // Description: Defines the Single Cacheline class and its methods
 // -------------------------------------------------------------------------
 
-`include "L2CACHE_DEFS.svh"
-
-`include "L2CPKG.sv"
-
 class L2CLINE;
    // Create a cache line of CLINE type
    CLINE myline;
@@ -23,6 +19,7 @@ class L2CLINE;
       this.myline.ru_num = '0;
       this.myline.tag = '0;
       this.myline.data = '0;
+      
    endfunction // new
 
    function automatic int chk_tag (TYP_TAG in_tag);
@@ -94,8 +91,6 @@ class L2CLINE;
    endfunction // get_mesi_bits
 
    function automatic void updt_mesi(TYP_CMD cmd, TYP_SNOOP_RESP snoop);
-      // return 0 if successfully updated the mesi bits, -1 if catch erronous state change
-      // TODO ::
       // TYP_MESI_STATES {INV = 0, MOD = 1, EXCL = 2, SHRD = 3} 
       // this.myline.mesi <--- current mesi 
       // 
@@ -106,17 +101,20 @@ class L2CLINE;
       // 2. TYP_SNOOP_RESP
       // 
 
-
       case(this.myline.mesi) 
 	   INV: // Invalid
 		   // SNOOPING PROCESSOR
-		   if(snoop == !HIT) begin
-	 	      this.myline.mesi = INV; 
-		   end
+
+	           // If invalid, any Snoop command keeps the line Invalid,
+	           //    so there's no need of state modifications.
+	     
+		   //if(snoop == !HIT) begin
+	 	   //   this.myline.mesi = INV; 
+		   //end
 		   // SNOOPING PROCESSOR
 		   
 		   // PROCESSOR ACCESSING MEMORY 
-		   else if(((cmd == RD_L1D) | (cmd == RD_L1I)) & ((snoop == HIT) | (snoop == HITM))) 
+		   if(((cmd == RD_L1D) | (cmd == RD_L1I)) & ((snoop == HIT) | (snoop == HITM))) 
 		   begin
 		      this.myline.mesi = SHRD; 
 		   end
@@ -124,22 +122,23 @@ class L2CLINE;
 		   begin
 		      this.myline.mesi = EXCL; 	   
 		   end
-		   else if((cmd == WR_L1D) & (cmd == SNP_RWIM)) begin
+		   else if(cmd == WR_L1D) begin // no need to check snoop response for writes
 		      this.myline.mesi = MOD; 	   
 		   end
 		   // PROCESSOR ACCESSING MEMORY 
 
            MOD: // Modified
 		   // SNOOPING PROCESSOR
-		   if((cmd == SNP_RWIM) & (snoop == HITM)) begin
+		   if(cmd == SNP_RWIM) begin
 		      this.myline.mesi = INV;
 		   end
-		   else if((cmd == SNP_RD) &  (snoop == HITM)) begin 
+		   else if(cmd == SNP_RD) begin 
 		      this.myline.mesi = SHRD;
 		   end
 		   // SNOOPING PROCESSOR
 		   
-		   // PROCESSOR ACCESSING MEMORY 
+		   // PROCESSOR ACCESSING MEMORY
+	           // if hit and doing a rd/wr op, no need to check bus response(shouldn't have busop)
 		   else if((cmd == RD_L1D) | (cmd == RD_L1I) | (cmd == WR_L1D)) begin
 		       this.myline.mesi = MOD;
 		   end
@@ -151,15 +150,12 @@ class L2CLINE;
 		   if(cmd == SNP_RWIM) begin
 		      this.myline.mesi = INV;  	   
 		   end
-		   else if((cmd == SNP_RD) & (snoop == HITM)) begin
+		   else if(cmd == SNP_RD) begin
 		      this.myline.mesi = SHRD; 
 		   end
 		   //SNOOPING PROCESSOR 
 		   
 		   // PROCESSOR ACCESSING MEMORY
-		   else if((cmd == RD_L1D) | (cmd == RD_L1I)) begin
-		       this.myline.mesi = EXCL; 
-		   end
 		   else if((cmd == WR_L1D)) begin
 		       this.myline.mesi = MOD; 
 		   end
@@ -167,19 +163,13 @@ class L2CLINE;
 
 	   SHRD: // Shared 
 		   // SNOOPING PROCESSOR
-		   if((snoop == SNP_RD) & (snoop == HIT)) begin 
-		      this.myline.mesi = SHRD; 	   
-		   end
-		   else if((cmd == SNP_RWIM) | (cmd ==SNP_INV)) begin
+		   if((cmd == SNP_RWIM) | (cmd ==SNP_INV)) begin
 		      this.myline.mesi = INV; 
 		   end
 		   // SNOOPING PROCESSOR
 		   
 		   // PROCESSOR ACCESSING MEMORY 
-		   else if((cmd == RD_L1D) |(cmd == RD_L1I)) begin
-		       this.myline.mesi = SHRD; 
-		   end
-		   else if((cmd == WR_L1D) & (cmd == SNP_INV)) begin
+		   else if(cmd == WR_L1D) begin
 		       this.myline.mesi = MOD;
 		   end
 		   // PROCESSOR ACCESSING MEMORY
@@ -192,7 +182,7 @@ class L2CLINE;
 		// this.myline.ru_num = '0;
         // this.myline.tag = '0;
         // this.myline.data = '0;
-		$display("---------- Line Data ----------\n"); 
+		$display("\t---------- Line Data ----------"); 
 		$display("Tag --- %0p \n",this.myline.tag); 
 		$display("LRU Num --- %0p \n",this.myline.ru_num); 
 		$display("MESI State --- %0p \n",this.myline.mesi);

@@ -11,11 +11,6 @@
 //                 corresponds to Set N Associativity
 // -------------------------------------------------------------------------
 
-`include "L2CACHE_DEFS.svh"
-
-`include "L2CPKG.sv"
-`include "L2CLINE.sv"
-
 class L2CSET;
    // Create a cache line of CLINE type
    L2CLINE line[L2_ASSOC] ;
@@ -31,6 +26,7 @@ class L2CSET;
       this.wayCount = 0;
       this.index = num;
       foreach (this.line[i]) this.line[i] = new();
+      
    endfunction // new
 
    // function to check the precense of TAG in one of the lines
@@ -55,6 +51,7 @@ class L2CSET;
       // 2. if MAX associativity occupied
       // 
       //
+
 	 if(this.wayCount === L2_ASSOC) begin
 	    // Have all WAYs occupied, EVICT a Line
 	    ru = LRU;
@@ -147,6 +144,7 @@ class L2CSET;
       TYP_MESI_STATES curr_state;
       
       begin
+
 	 // get the TAG bits from PA
 	 curr_tag = pa_in >> (L2_LINE_ADDR+L2_INDEX_LENGTH);
 
@@ -263,19 +261,14 @@ class L2CSET;
    endfunction // set_process_snoop
 
    function automatic void set_print();
-      int c; // count total ways valid in the set 
-      
       begin
-	 c = 0;
-	 
 	 foreach(this.line[i]) begin
 	    // display only if valid line
 	    if(this.line[i].get_mesi_bits() != INV) begin
-	       $display("STATS : CACHE SET - %0d : WAY - %0d", this.index, i);
-	       this.line[i].print_line();
-	       c++;
+	       $display("\t | SET-%d | WAY-%p | MESI-%p | RU-%d | TAG-0x%h ",
+			this.index, i, this.line[i].get_mesi_bits(), 
+			this.line[i].get_ru_num(), this.line[i].get_tag());
 	    end
-	    $display("STATS : CACHE SET - %0d : TOTAL WAYS VALID - %0d", this.index, c);
 	 end
       end
    endfunction // set_print

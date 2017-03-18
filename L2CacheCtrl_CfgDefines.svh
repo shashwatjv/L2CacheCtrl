@@ -19,8 +19,8 @@
 `define L1_ASSOC 4
 `define L1_LINE_SIZE 32
 
-`define L2_SIZE_KB 16384
-`define L2_ASSOC 8
-`define L2_LINE_SIZE 64
+`define L2_SIZE_KB 1024
+`define L2_ASSOC 4
+`define L2_LINE_SIZE 32
 
 `endif
