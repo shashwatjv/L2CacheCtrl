@@ -25,8 +25,11 @@ function void BusOperation
 	//     then the shared copy of all other processors should have been 
 	//     evicted without modifications.
 	resp = NOHIT;
+      else if(cmd == INVALIDATE)
+	// for a INVALIDATE command cannot expect to get HITM
+	$cast(resp, ($countones(addr) % 2) ); // 2 because of current Snoop Response encoding
       else
-	$cast(resp, ($countones(addr) % 3) );
+	$cast(resp, ($countones(addr) % 3) ); // 3 because of current Snoop Response encoding
    end
 endfunction // BusOperation
 
