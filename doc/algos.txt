@@ -49,6 +49,30 @@ Process SNOOP command
 3. If match
 	a. check MESI state
 	b. set return as HIT/HITM
+	c. update MESI states
+
+	CMD	State	SNPRSP	NxtST
+       ----------------------------------------
+	RD	MOD	HITM 	SHRD(WriteBack)
+		SHRD	HIT	SHRD
+		EXCL	HIT	SHRD
+		INV	NOHIT	INV
+
+	WR	MOD	HITM*	Error / don't INV(Evict)
+		SHRD	HIT*	Error / don't INV(Evict)
+		EXCL	HIT*	Error / don't INV(Evict)
+		INV	NOHIT	INV
+
+	RWIM	MOD	HITM	INV(WriteBack)
+		SHRD	HIT	INV(Evict)
+		EXCL	HIT	INV(Evict)
+		INV	NOHIT	INV
+
+	INVLD	MOD	HITM* 	Error / dont' INV(Evict)	
+		SHRD	HIT	INV(Evict)
+		EXCL	HIT*	Error / dont' INV(Evict)
+		INV	NOHIT	INV
+
 
 -----------------------------
 Process Clear Command
