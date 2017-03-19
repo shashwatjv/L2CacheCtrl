@@ -23,7 +23,21 @@
 `define L2_ASSOC 8
 `define L2_LINE_SIZE 64
 
-`define TESTCASE_FILE "../tests/cc1.din"
-`define TESTCASE_HEAD_LINE 0
+//-------------------------------------------------------
+//    Defines to Configure the Test address generator
+
+`define SELF_TEST
+
+`ifdef SELF_TEST
+
+`define FN_CMDGEN L2CMDGEN
+
+`define TESTFILE "L2CADDRGEN.sv"
+
+`define TESTCMD "LRU_CHECK"
+`define TESTCMD_HEAD 0
+
+`define T_LRU_CMD 3
+`endif
 
 `endif

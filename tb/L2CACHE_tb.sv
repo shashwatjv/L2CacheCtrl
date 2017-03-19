@@ -36,8 +36,27 @@ program test;
    longint lineCount;
    int chk;
 
+`ifdef SELF_TEST
+ `include `TESTFILE
+`endif
+   
    initial begin
 
+      $display("\n");
+      $display("\t ***********************************************************");
+      $display("\t -----------------------------------------------------------");
+      $display("\t |      L2 CACHE SIMULATION  ");
+      $display("\t -----------------------------------------------------------");
+
+`ifdef SELF_TEST
+      // if doing self test, generate the command input file
+      `FN_CMDGEN();
+
+      $display("\t -----------------------------------------------------------");
+      $display("\t |      COMPLETED COMMAND GENERATION FOR SIMULATION ");
+      $display("\t -----------------------------------------------------------");
+      
+`endif
       // Cache Instance
       uut = new();
 
@@ -45,10 +64,10 @@ program test;
       //    Open the testcase file
       //---------------------------------
 
-      fd = $fopen(`TESTCASE_FILE,"r");
+      fd = $fopen(`TESTCMD,"r");
       
       if(!fd) begin
-	 $display("Cannot Open TestCase file %s",`TESTCASE_FILE);
+	 $display("\n\tCannot Open TestCommands file %s",`TESTCMD);
 	 $finish();
       end
 
@@ -57,7 +76,7 @@ program test;
       //---------------------------------
 
       // get the number of header lines that need to be skipped
-      head = `TESTCASE_HEAD_LINE;
+      head = `TESTCMD_HEAD;
 
       while(!$feof(fd)) begin
 	 if(head) begin
@@ -65,9 +84,11 @@ program test;
 	    chk = $fgets(line,fd);
 	    head--;
 	    lineCount++;
+	    //$display("\n \t HEAD : %s " , line);
+	    
 	 end else begin
 	    chk = $fscanf(fd,"%d %h \n", cmd_num, pa);
-	    //$display("CMD=%d, PA=%h",cmd_num,pa);
+	    //$display("\tCMD=%d, PA=%h",cmd_num,pa);
 	    $cast(cmd, cmd_num);
 	    uut.l2_command_process(cmd,pa);
 	    lineCount++;
@@ -77,10 +98,11 @@ program test;
       $fclose(fd);
 
       $display("\t -----------------------------------------------------------");
-      $display("\t | Read %0d Lines from %s file",lineCount, `TESTCASE_FILE);
+      $display("\t | Read %0d Lines from %s file",lineCount, `TESTCMD);
       $display("\t -----------------------------------------------------------");
       $display("\t |      SIMULATION COMPLETE ");
       $display("\t -----------------------------------------------------------");
+      $display("\t ***********************************************************");
       
       $finish();
    end
