@@ -84,11 +84,11 @@ program test;
 	    chk = $fgets(line,fd);
 	    head--;
 	    lineCount++;
-	    //$display("\n \t HEAD : %s " , line);
+	    $display("\n \t HEAD : %s " , line);
 	    
 	 end else begin
 	    chk = $fscanf(fd,"%d %h \n", cmd_num, pa);
-	    //$display("\tCMD=%d, PA=%h",cmd_num,pa);
+	    $display("\tCMD=%d, PA=%h",cmd_num,pa);
 	    $cast(cmd, cmd_num);
 	    uut.l2_command_process(cmd,pa);
 	    lineCount++;
