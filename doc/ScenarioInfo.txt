@@ -7,15 +7,53 @@
 // Filename: ScenarioInfo.txt
 // 
 
-Scenario1:
+Scenario 1:
 Writes to all N ways in a set, Read same ways to get 50% Hit Ratio
 Reset the Cache and repeat same commands to get same stats as before reset
 Assumes 4-way Cache 
 
-Scenario2:
-Check LRU change and 
-Also check Write Back on Eviction
+Scenario 2 : 
+Check LRU change and Eviction
+Check Write Back on Eviction
+Check for New Allocation on first available Vacant Way
 Assumes 4-way Cache 
 
-Scenario3:
-Test SnoopRd commnd generated WriteBack 
+Scenario 3 : SnoopRd on Mod state and Evicted address
+Occupy All Ways in Modified state
+Change RU order 
+Generate an Eviction
+Test SnoopRd commnd generated WriteBack on a Modified Line
+Test SnoopRd on evicted address gives NoHIT
+
+Scenario 4 : BusOp-Invalidate
+Transition to Excl/Shared based on BusResponse from Modified
+Shared state to Modified, check Invalidate as BusOp for write in Shared state
+
+Scenario 5 : SnoopInvalidate
+Occupy all Ways in Mod state
+Generate an Eviction to get new Line to Shared state (checks Eviction and Shared)
+Put SnoopInvalidate command on Exclusive line, verify it doesn't evict the line
+Put SnoopInvalidate on Shared Line check that the line is evicted
+Verify that a New Tag goes into the first available empty way
+
+Scenario 6 : Check state Retaining Arcs
+Put a line in Exclusive state, verify a a new read keeps it in Excl state
+Put a line in Shared state, verify a a new read keeps it in Shared state
+Put a line in Modified state, verify a a new write keeps it in modified state
+
+Scenario 7: Snoop RWIM
+Put a line in modified state
+Put SnoopRWIM in same address, verify WriteBack and State change to Invalid 
+Put a line in Shared state
+Put SnoopRWIM to same line, verify the line Invalidate
+
+Scenario 8 : Snnop WR 
+Put lines in Excl, Shared and Modifed state
+Verify no state change for Snoop WR command
+
+Scenario 9 : Reset command
+Direct Rest command upfirst
+Allocate a line
+Reset cache again
+
+
