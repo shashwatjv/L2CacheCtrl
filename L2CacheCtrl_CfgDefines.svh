@@ -26,7 +26,9 @@
 //-------------------------------------------------------
 //    Defines to Configure the Test address generator
 
-`define SELF_TEST
+`define TESTCMD_HEAD 0
+
+//`define SELF_TEST
 
 `ifdef SELF_TEST
 
