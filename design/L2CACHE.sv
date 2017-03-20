@@ -22,6 +22,7 @@ class L2CACHE;
       int  indx;
       bit  cpu, snp;
       int  hit;
+      int  resp; 
       begin
 
 		set = pa_in >> L2_LINE_ADDR; // shifting by offset bits gets us to Index bits
@@ -57,7 +58,7 @@ class L2CACHE;
 	 //---------------------------------------------------------- 
 	 // USED FOR SNOOP STATS 
 	 if(snp) begin
-	    resp = cache[index].set_process_snoop(cmd_in, pa_in);
+	    resp = cache[indx].set_process_snoop(cmd_in, pa_in);
 	    snoop_count++; 
 	    if(resp == 0) begin 
 			HITM++; 
