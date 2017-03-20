@@ -15,7 +15,7 @@
 class L2CACHE;
    L2CSET cache[int];
 
-   longint reads, writes, misses, hits;
+   longint reads, writes, misses, hits, HIT, HITM,snoop_count;
 
    function automatic void l2_command_process(TYP_CMD cmd_in, TYP_PA pa_in);
       TYP_INDX set;
@@ -54,21 +54,19 @@ class L2CACHE;
 	 
 	 //----------------------------------------------------------
 	 //              Snoop Command Processing
-	 //----------------------------------------------------------
-	 
-	 // STILL UNDER CONSIDERATION --- PENDING 
+	 //---------------------------------------------------------- 
 	 // USED FOR SNOOP STATS 
-/*	 if(snp) begin
+	 if(snp) begin
 	    resp = cache[index].set_process_snoop(cmd_in, pa_in);
-	    cache[index].mesibit; 
-		if(mesibit == invalid) begin 
-			misses++; 
+	    snoop_count++; 
+	    if(resp == 0) begin 
+			HITM++; 
 		end 
 		else begin
-			hits++; 
-		end 
+			HIT++; 
+	    end 
 	 end
-*/	
+	
 	 if(cmd_in == DISP) begin
 
 	        $display("\t -----------------------------------------------------------");
@@ -85,6 +83,12 @@ class L2CACHE;
 		$display("\t | WRITES --- %0d ",writes);
 		$display("\t | RATIO  --- %0.2f%%",(hits*100.0)/(reads+writes));
 	        $display("\t -----------------------------------------------------------");
+		$display("\t |    STATS FOR SNOOP RESULTS                              |");
+		$display("\t -----------------------------------------------------------"); 
+		$display("\t | SNOOP HIT --- %0d",HIT); 
+		$display("\t | SNOOP HITM --- %0d",HITM); 
+		$display("\t | SNOOP RATIO --- %0.2f%%",(HIT*100)/(snoop_count)); 
+		$display("\t -----------------------------------------------------------");
 	        $display("\n");
 	 end 
 	 
