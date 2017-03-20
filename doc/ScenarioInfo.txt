@@ -1,0 +1,21 @@
+// -------------------------------------------------------------------------
+// Portland State University
+// Course: ECE585
+// 
+// Project: L2 Cache Controller
+// 
+// Filename: ScenarioInfo.txt
+// 
+
+Scenario1:
+Writes to all N ways in a set, Read same ways to get 50% Hit Ratio
+Reset the Cache and repeat same commands to get same stats as before reset
+Assumes 4-way Cache 
+
+Scenario2:
+Check LRU change and 
+Also check Write Back on Eviction
+Assumes 4-way Cache 
+
+Scenario3:
+Test SnoopRd commnd generated WriteBack 

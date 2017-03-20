@@ -24,6 +24,10 @@
 `define L2_LINE_SIZE 64
 
 //-------------------------------------------------------
+//    Defines to control Debug messages
+//`define L2CSET_DBG
+
+//-------------------------------------------------------
 //    Defines to Configure the Test address generator
 
 `define TESTCMD_HEAD 0

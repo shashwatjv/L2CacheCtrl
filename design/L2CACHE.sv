@@ -85,13 +85,16 @@ class L2CACHE;
 		$display("\t | MISSES --- %0d ",misses); 
 		$display("\t | READS  --- %0d ",reads); 
 		$display("\t | WRITES --- %0d ",writes);
-		$display("\t | RATIO  --- %0.2f%%",(hits*100.0)/(reads+writes));
+		if((reads+writes) == 0 ) 
+                $display("\t | RATIO  --- No Commands");
+		else 
+                $display("\t | RATIO  --- %0.2f%%",(hits*100.0)/(reads+writes));
 	        $display("\t -----------------------------------------------------------");
 		$display("\t |    STATS FOR SNOOP RESULTS                              |");
 		$display("\t -----------------------------------------------------------"); 
-		$display("\t | SNOOP HIT --- %0d",snoop_hit); 
-		$display("\t | SNOOP HITM --- %0d",snoop_hitm);
-		$display("\t | SNOOP NOHIT --- %0d",snoop_nohit);  
+		$display("\t | PUT SNOOP HIT --- %0d",snoop_hit); 
+		$display("\t | PUT SNOOP HITM --- %0d",snoop_hitm);
+		$display("\t | PUT SNOOP NOHIT --- %0d",snoop_nohit);  
 		$display("\t -----------------------------------------------------------");
 	        $display("\n");
 	 end 

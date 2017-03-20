@@ -68,6 +68,7 @@ class L2CSET;
 	    end
 	 end
 
+	 // Update the RU number of newly allocatd line
 	 $cast(ru,this.wayCount);
 	 this.line[way].put_ru_num(ru);
 
@@ -80,8 +81,10 @@ class L2CSET;
    endfunction // set_alloc_line
    
    function automatic void set_updt_ru( TYP_RU_NUM ru_in);
+      // the ru_in indicates the ru number of the line currently accessed
       int c;
       begin
+	 // update the RU for all the valid lines in the set
 	 foreach (this.line[i]) begin
 	    c = this.line[i].updt_ru_num(ru_in,this.wayCount);
 	    if(c) begin
@@ -118,7 +121,7 @@ class L2CSET;
             assert(resp==NOHIT); // for L2 eviction never expect HIT/HITM
 
             // notify L1 about eviction in L2
-            L1Notify_L2Evict(pa);
+            L1Notify_L2Evict(pa); // Assumes L1 has knowledge of L2's cache line size
 	 end
 
 	 // update RU for cache lines such that RU is reduced by 1 respectively
@@ -152,10 +155,9 @@ class L2CSET;
 	 way = this.set_chk_tag(curr_tag);
 	 if(way == -1) begin
 
-	    hit = 0; //set the return value
-	    
 	    // didn't get a hit on TAG check, need to allocate a new line
 	    way = this.set_alloc_line();
+
 	    this.line[way].set_tag(curr_tag);
 
 	    // with Line allocated, get the relevant data in from the next memory hierarchy
@@ -169,10 +171,10 @@ class L2CSET;
 	    // assign the MESI state based on BusOp response
 	    this.line[way].updt_mesi(cmd_in, resp);
 
+	    hit = 0; //set the return value
+	    
 	 end else begin // got a hit
 
-	    hit = 1; //set the return value
-	    
 	    // if we did get a HIT of TAG match,
 	    curr_ru = this.line[way].get_ru_num();
 
@@ -190,6 +192,8 @@ class L2CSET;
 	    // also, if we have a hit, the BusOp response is insignificant
 	    this.line[way].updt_mesi(cmd_in, resp);
 
+	    hit = 1; //set the return value
+	    
 	 end // else: !if(way == -1)
 	 // Done with local cache state modifications
 
@@ -226,16 +230,19 @@ class L2CSET;
 	    // If current command is Invalidate(and state is Shared) or RWIM(irrespective of State)
 	    //  need to do eviction
 	    if((cmd_in == SNP_RWIM) || ((cmd_in == SNP_INV) && (curr_mesi == SHRD)) ) begin
+
 	       t = this.set_evict_line( this.line[way].get_ru_num() );
 	       assert(t==way); // just curious ... we should always get way = t coz. we are evicting the current line
-	    end else begin
+
+	    end else begin // For SNP_RD commands
+
 	       // For Snoop commands, BusOp response is insignificant for State modification
 	       // Update the MESI state if current snoop command doesn't evict the line
 	       resp = HIT;
 	       this.line[way].updt_mesi(cmd_in, resp);
+
 	    end
 
-	    // Eviction Done.
 	    // Determine the SNOOP response to be given based on the Extracted MESI state
 	    if(curr_mesi == MOD) begin
 
