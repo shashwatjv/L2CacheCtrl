@@ -15,14 +15,14 @@
 class L2CACHE;
    L2CSET cache[int];
 
-   longint reads, writes, misses, hits, HIT, HITM,snoop_count;
+   longint reads, writes, misses, hits, snoop_hit, snoop_hitm,snoop_nohit,snoop_count;
 
    function automatic void l2_command_process(TYP_CMD cmd_in, TYP_PA pa_in);
       TYP_INDX set;
       int  indx;
       bit  cpu, snp;
       int  hit;
-      int  resp; 
+      TYP_SNOOP_RESP resp;
       begin
 
 		set = pa_in >> L2_LINE_ADDR; // shifting by offset bits gets us to Index bits
@@ -59,12 +59,15 @@ class L2CACHE;
 	 // USED FOR SNOOP STATS 
 	 if(snp) begin
 	    resp = cache[indx].set_process_snoop(cmd_in, pa_in);
-	    snoop_count++; 
-	    if(resp == 0) begin 
-			HITM++; 
+	    snoop_count++;
+	    if(resp == NOHIT) begin 
+		     snoop_nohit++; 
 		end 
-		else begin
-			HIT++; 
+	    else if(resp == HIT) begin 
+		     snoop_hit++; 
+	    end
+	    else begin
+		     snoop_hitm++; 
 	    end 
 	 end
 	
@@ -86,9 +89,9 @@ class L2CACHE;
 	        $display("\t -----------------------------------------------------------");
 		$display("\t |    STATS FOR SNOOP RESULTS                              |");
 		$display("\t -----------------------------------------------------------"); 
-		$display("\t | SNOOP HIT --- %0d",HIT); 
-		$display("\t | SNOOP HITM --- %0d",HITM); 
-		$display("\t | SNOOP RATIO --- %0.2f%%",(HIT*100)/(snoop_count)); 
+		$display("\t | SNOOP HIT --- %0d",snoop_hit); 
+		$display("\t | SNOOP HITM --- %0d",snoop_hitm);
+		$display("\t | SNOOP NOHIT --- %0d",snoop_nohit);  
 		$display("\t -----------------------------------------------------------");
 	        $display("\n");
 	 end 
