@@ -110,18 +110,19 @@ class L2CSET;
 	    end
 	 end
 	 
+         // notify L1 about eviction in L2
+	 pa = { >> {this.line[way].get_tag(), this.index, {L2_LINE_ADDR{1'b0}} } };
+         L1Notify_L2Evict(pa); // Assumes L1 has knowledge of L2's cache line size
+
 	 // got the LRU line
 	 // evict the line if not modified, else writeback
 	 if(this.line[way].get_mesi_bits() === MOD) begin
 	    // write back to next level of memory hierarchy
-	    pa = { >> {this.line[way].get_tag(), this.index, {L2_LINE_ADDR{1'b0}} } };
             busop = WRITE;
 
             BusOperation(pa, busop, resp);
             assert(resp==NOHIT); // for L2 eviction never expect HIT/HITM
 
-            // notify L1 about eviction in L2
-            L1Notify_L2Evict(pa); // Assumes L1 has knowledge of L2's cache line size
 	 end
 
 	 // update RU for cache lines such that RU is reduced by 1 respectively
@@ -130,6 +131,7 @@ class L2CSET;
 	 // invalidate the line
 	 this.line[way].put_mesi_inv();
 	 
+
 	 this.wayCount--;
 
 	 return way;

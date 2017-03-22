@@ -32,9 +32,9 @@ function void BusOperation
 	$cast(resp, ($countones(addr) % 3) ); // 3 because of current Snoop Response encoding
 
       $display("\t -----------------------------------------------------------");
-      $display("\t|                        BUS OPERATION                      ");
+      $display("\t |                        BUS OPERATION                      ");
       $display("\t -----------------------------------------------------------");
-      $display("\t| CMD-%p : ADDR-0x%x : GET RESPONSE-%p" , cmd, addr, resp);
+      $display("\t | CMD-%p : ADDR-0x%x : GET RESPONSE-%p" , cmd, addr, resp);
    end
 endfunction // BusOperation
 
@@ -50,6 +50,6 @@ function void L1Notify_L2Evict
       //      Knowing (L2CacheLineSize/L1CacheLineSize) determines 
       //      the number of Cache lines to be evicted by L1
       $display("\t -----------------------------------------------------------");
-      $display("\t|   L1 Notification -> L2 Evicted Address : 0x%x " , addr);
+      $display("\t |   L1 Notification -> L2 Evicted Address : 0x%x " , addr);
    end
 endfunction // L1Notify_L2Evict
